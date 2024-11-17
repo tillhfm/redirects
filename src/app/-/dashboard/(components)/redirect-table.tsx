@@ -150,7 +150,7 @@ export function RedirectTable({
                   <DropdownMenu>
                      <DropdownMenuTrigger asChild className="w-full">
                         <Button variant="ghost" className="h-8 w-8 p-0 m-0">
-                           <span className="sr-only">Open menu</span>
+                           <span className="sr-only">Open actions</span>
                            <MoreHorizontal />
                         </Button>
                      </DropdownMenuTrigger>
