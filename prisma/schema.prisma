@@ -1,0 +1,17 @@
+generator client {
+   provider = "prisma-client-js"
+}
+
+datasource db {
+   provider = "postgresql"
+   url      = env("DATABASE_URL")
+}
+
+model Redirect {
+   id          Int      @id @default(autoincrement())
+   key         String   @unique
+   outcome     String
+   description String
+   createdAt   DateTime @default(now())
+   updatedAt   DateTime @default(now()) @updatedAt
+}
