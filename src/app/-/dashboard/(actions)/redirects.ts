@@ -55,11 +55,3 @@ export async function deleteRedirect(id: number) {
 export async function getAllRedirects() {
    return await prisma.redirect.findMany();
 }
-
-export async function doesRedirectKeyExist(key: string) {
-   return await prisma.redirect.findUnique({
-      where: {
-         key: key
-      }
-   }) ? true : false
-}
