@@ -5,17 +5,15 @@ import {
    Dialog,
    DialogClose,
    DialogContent,
-   DialogDescription,
    DialogFooter,
    DialogHeader,
-   DialogTitle,
+   DialogTitle
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { deleteRedirect } from "../(actions)/redirects"
-import { useRouter } from 'next/navigation';
-import { Redirect } from "@prisma/client"
 import { useToast } from "@/hooks/use-toast"
+import { Redirect } from "@prisma/client"
+import { useRouter } from 'next/navigation'
+import { deleteRedirect } from "../(actions)/redirects"
+import { useState } from "react"
 
 const DeleteRedirectDialog = ({
    selectedHook,
@@ -29,18 +27,23 @@ const DeleteRedirectDialog = ({
 
    const [isDialogOpen, setDialogOpen] = dialogOpenHook
 
+   const [isSubmitLoading, setSubmitLoading] = useState(false)
+
    const router = useRouter()
 
    const { toast } = useToast()
 
-   const submit = () => {
+   const submit = async () => {
       if (!selected) return
+      setSubmitLoading(true)
 
-      const success = deleteRedirect(selected.id)
+      const success = await deleteRedirect(selected.id)
       if (!success) {
          toast({ title: "Error", description: "There was an error deleting the redirect. Check app log.", variant: "destructive" })
+         setSubmitLoading(false)
          return
       }
+      setSubmitLoading(false)
       setDialogOpen(false)
       router.refresh()
       toast({ title: "Redirect deleted", description: "The redirect has been deleted." })
@@ -69,8 +72,8 @@ const DeleteRedirectDialog = ({
                      Cancel
                   </Button>
                </DialogClose>
-               <Button type="submit" variant="destructive" onClick={submit}>
-                  Delete
+               <Button type="submit" variant="destructive" onClick={submit} disabled={isSubmitLoading}>
+                  {!isSubmitLoading ? 'Delete' : 'Loading..'}
                </Button>
             </DialogFooter>
          </DialogContent>

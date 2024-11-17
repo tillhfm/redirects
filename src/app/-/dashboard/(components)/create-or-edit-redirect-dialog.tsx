@@ -35,6 +35,8 @@ const CreateOrEditRedirectDialog = ({
 
    const [isDialogOpen, setDialogOpen] = dialogOpenHook
 
+   const [isSubmitLoading, setSubmitLoading] = useState(false)
+
    const schema = yup.object().shape({
       key: yup.string()
          .required('The redirect key is required.')
@@ -68,11 +70,14 @@ const CreateOrEditRedirectDialog = ({
    const key = watch('key', '')
 
    const submitCreation = async (formValues: FormData) => {
+      setSubmitLoading(true)
       const success = await createRedirect(formValues.key, formValues.outcome, formValues.description ?? '')
       if (!success) {
          toast({ title: "Error", description: "There was an error creating the redirect. Check app log.", variant: "destructive" })
+         setSubmitLoading(false)
          return
       }
+      setSubmitLoading(false)
       setDialogOpen(false)
       router.refresh()
       toast({ title: "Redirect created", description: "The redirect has been created." })
@@ -80,7 +85,9 @@ const CreateOrEditRedirectDialog = ({
 
    const submitEdit = async (formValues: FormData) => {
       if (!selected) return
+      setSubmitLoading(true)
       if (selected.key == formValues.key && selected.outcome == formValues.outcome && selected.description == formValues.description) {
+         setSubmitLoading(false)
          setDialogOpen(false)
          return
       }
@@ -88,8 +95,10 @@ const CreateOrEditRedirectDialog = ({
       const success = await editRedirect(selected.id, formValues.key, formValues.outcome, formValues.description ?? '')
       if (!success) {
          toast({ title: "Error", description: "There was an error updating the redirect. Check app log.", variant: "destructive" })
+         setSubmitLoading(false)
          return
       }
+      setSubmitLoading(false)
       setDialogOpen(false)
       router.refresh()
       toast({ title: "Redirect updated", description: "The redirect has been updated." })
@@ -176,8 +185,8 @@ const CreateOrEditRedirectDialog = ({
                      Cancel
                   </Button>
                </DialogClose>
-               <Button type="submit" onClick={handleSubmit(submit)}>
-                  {isEdit ? 'Save' : 'Create'}
+               <Button type="submit" onClick={handleSubmit(submit)} disabled={isSubmitLoading}>
+                  {!isSubmitLoading ? (isEdit ? 'Save' : 'Create') : 'Loading..'}
                </Button>
             </DialogFooter>
          </DialogContent>
