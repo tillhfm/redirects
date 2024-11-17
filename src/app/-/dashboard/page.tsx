@@ -2,6 +2,7 @@ import React from 'react'
 import { getAllRedirects } from "./(actions)/redirects"
 import { RedirectTable } from "./(components)/redirect-table"
 
+export const dynamic = 'force-dynamic';
 const Dashboard = async () => {
    const redirects = await getAllRedirects()
 
